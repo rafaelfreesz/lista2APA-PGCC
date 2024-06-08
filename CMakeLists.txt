@@ -3,4 +3,8 @@ project(lista2)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(lista2 main.cpp)
+add_executable(lista2 main.cpp
+        Grafo.cpp
+        Grafo.h
+        Utils.cpp
+        Utils.h)
