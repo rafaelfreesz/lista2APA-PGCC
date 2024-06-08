@@ -18,7 +18,9 @@ public:
 
     static Grafo * gerarGrafoOrdemK(int ordem, int pesoMaximo, float densidadeArestas);
     void incluirAresta(int i, int j, int peso);
-    int dijkstra(int iA, int iB);
+    bool ehConexo();
+
+    void buscaProfundidade(int noAtual, int noB, int *verificados);
 
     //Atributos
     int grau; //quantidade de arestas próprias

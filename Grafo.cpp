@@ -35,7 +35,7 @@ Grafo * Grafo::gerarGrafoOrdemK(int ordem, int pesoMaximo, float densidadeAresta
 
     int grau =(int)(densidadeArestas*(ordem*(ordem-1)/2));
 
-    for(int i=0;i<grau;i++) {
+    for(int i=0;i<grau || !grafo->ehConexo();i++) {
         int a = rand()%grafo->ordem;
         int b = rand()%grafo->ordem;
 
@@ -58,4 +58,49 @@ void Grafo::incluirAresta(int i, int j, int peso) {
     this->adjacencia[i][j] = peso;
     this->adjacencia[j][i] = peso;
     this->grau++;
+}
+
+bool Grafo::ehConexo() {
+
+    int* verificados = new int[this->ordem];
+    for(int i=0;i<this->ordem;i++) {
+        verificados[i]=0;
+    }
+
+    for(int i=1;i<this->ordem;i++) {
+        if(verificados[i]==0) {
+            buscaProfundidade(0,i,verificados);
+        }
+    }
+
+    for(int i=0;i<this->ordem;i++) {
+        if(!verificados[i]) {
+            delete [] verificados;
+            return nullptr;
+        }
+    }
+
+    delete []verificados;
+    return true;
+}
+
+void Grafo::buscaProfundidade(int noAtual, int noB, int *verificados) {
+
+    verificados[noAtual]=2;
+
+    for(int prox=0;prox<this->ordem;prox++) {
+
+            if(this->adjacencia[noAtual][prox]>0) {
+                if(noB==prox) {
+                    verificados[prox] = 1;
+                    return;
+                }
+
+                if(verificados[prox]!=2) {
+                    buscaProfundidade(prox, noB,verificados);
+                }
+            }
+
+    }
+
 }
