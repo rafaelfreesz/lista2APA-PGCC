@@ -4,6 +4,10 @@
 
 #include "Grafo.h"
 
+#include <list>
+#include <string>
+#include <vector>
+
 //Construtores e Destrutores
 Grafo::Grafo(int ordem, bool orientado) {
     this->grau = 0;
@@ -80,6 +84,59 @@ Grafo * Grafo::gerarGrafoFortementeConexo(int ordem, int pesoMaximo) {
     }
 
     return grafo;
+}
+
+Grafo * Grafo::gerarGrafoRestaUm() {
+
+    //Contabilizando Estados
+    vector<int> totalAntes;
+    vector<string> jogador;
+    vector<int> totalDepois;
+
+    for(int i=1;i<=3;i++) {
+        totalAntes.push_back(10);
+        jogador.push_back("A");
+        totalDepois.push_back(10-i);
+    }
+
+    for(int i=1;i<=3;i++) {
+        totalAntes.push_back(9);
+        jogador.push_back("B");
+        totalDepois.push_back(9-i);
+    }
+
+    for(int i=8;i>0;i--) {
+        for(int j=1;j<=3;j++) {
+            if(i-j>=0) {
+                totalAntes.push_back(i);
+                jogador.push_back("A");
+                totalDepois.push_back(i-j);
+            }
+        }
+        for(int j=1;j<=3;j++) {
+            if(i-j>=0) {
+                totalAntes.push_back(i);
+                jogador.push_back("B");
+                totalDepois.push_back(i-j);
+            }
+        }
+    }
+
+    for(int i=0;i<totalAntes.size();i++) {
+        cout<<totalAntes.at(i)<<" - "<<jogador.at(i)<<" - "<<totalDepois.at(i)<<endl;
+    }
+
+    int qtdEstados = totalAntes.size();
+
+
+    vector<string> rotulos;
+
+    //Gerando o grafo
+    Grafo* g = new Grafo(qtdEstados, true);
+
+
+
+    return nullptr;
 }
 
 void Grafo::incluirAresta(int i, int j, int peso) {
@@ -170,6 +227,31 @@ void Grafo::buscaProfundidade(int noAtual, int noB, int *verificados) {
 
 }
 
+string Grafo::buscaProfundidadeImprime(int noAtual, int noB, int *verificados) {
+
+    verificados[noAtual]=2;
+    for(int prox=0;prox<this->ordem;prox++) {
+
+        if(this->adjacencia[noAtual][prox]>0) {
+            if(noB==prox) {
+                verificados[prox] = 1;
+                return "-"+to_string(noAtual)+"-"+to_string(prox);
+            }
+
+            if(verificados[prox]!=2) {
+                string s = buscaProfundidadeImprime(prox, noB,verificados);
+                if(s!="") {
+                    return "-"+to_string(noAtual)+s;
+                }
+            }
+        }
+
+    }
+
+    return "";
+
+}
+
 double Grafo::calculaDistanciaMediaPorEtapas(int noOrigem) {
 
     int* etapas = new int[this->ordem];
@@ -183,7 +265,7 @@ double Grafo::calculaDistanciaMediaPorEtapas(int noOrigem) {
     for(int i=0;i<this->ordem;i++) {
         somaDistancias+=distancias[i];
         somaEtapas+=etapas[i];
-    }cout<<endl;
+    }
 
     delete[] distancias;
     delete[] etapas;
@@ -286,6 +368,18 @@ int* Grafo::dijkstra(int noOrigem) {
     }
 
     return distancias;
+}
+
+void Grafo::imprimeCaminho(int noA, int noB) {
+    int* verificados = new int[this->ordem];
+    for(int i=0;i<this->ordem;i++) {
+        verificados[i] = 0;
+    }
+
+    cout<<"Caminho minimo impresso:"<<endl;
+    cout<<buscaProfundidadeImprime(noA, noB,verificados)<<endl;
+
+    delete[] verificados;
 }
 
 /*int * Grafo::calculaDistanciaMediaPorEtapas(int noOrigem) {
